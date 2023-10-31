@@ -1,11 +1,20 @@
 package com.cucumber.pages;
 
+import java.io.IOException;
+
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import com.cucumberproject.steps.TestBase;
+import com.cucumberproject.utilities.FileUtil;
 
 public class ContactPage {
 	
@@ -52,6 +61,7 @@ public class ContactPage {
 	@FindBy(css="label#wpforms-3347-field_1-error")
 	WebElement requiredFieldErrorMsg;
 	
+	FileUtil file=new FileUtil();
 	
 	
 	public ContactPage() {
@@ -63,9 +73,8 @@ public class ContactPage {
 	}
 	
 	public void FillContactForm() {
-		Fname.sendKeys("1234");
-		Lname.sendKeys("45667");
-		email.sendKeys("kirtikhande10@gmail.com");
+		//file.getRowFromExcel("C:\\Users\\DELL\\Desktop\\New folder\\cucumber setup\\ContactFormExcel.xlsx", "ContactFormData", 1);
+		getRowFromExcel("C:\\Users\\DELL\\Desktop\\New folder\\cucumber setup\\ContactFormExcel.xlsx", "ContactFormData", 1);
 		Bronze.click();
 		Session1.click();
 		overnightyes.click();
@@ -75,9 +84,7 @@ public class ContactPage {
 		
 	}
 	public void FillTheContactForm() {
-		Fname.sendKeys("$%^&&");
-		Lname.sendKeys("%^&*");
-		email.sendKeys("kirtikhande10@gmail.com");
+		getRowFromExcel("C:\\Users\\DELL\\Desktop\\New folder\\cucumber setup\\ContactFormExcel.xlsx", "ContactFormData", 2);
 		Bronze.click();
 		Session1.click();
 		overnightyes.click();
@@ -85,15 +92,42 @@ public class ContactPage {
 	}
 	
 	public void FillContactFormCorrectly() {
-		Fname.sendKeys("kirti");
-		Lname.sendKeys("Birangal");
-		email.sendKeys("kirtikhande10@gmail.com");
+		getRowFromExcel("C:\\Users\\DELL\\Desktop\\New folder\\cucumber setup\\ContactFormExcel.xlsx", "ContactFormData", 3);
 		Bronze.click();
 		Session1.click();
 		overnightyes.click();
 		comments.sendKeys("General Enquiry");
 		
 	}
+	
+	public void getRowFromExcel(String filePath, String sheetName, int rowNum) {
+		
+		Workbook book = null;
+		try {
+			book = new XSSFWorkbook(filePath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Sheet sheet = book.getSheet(sheetName);
+		Row row = sheet.getRow(rowNum);
+		
+		
+			//Cell cellData=row.getCell(i);
+			String firstname=row.getCell(0).getStringCellValue();
+			String lastname=row.getCell(1).getStringCellValue();
+			String emailId=row.getCell(2).getStringCellValue();
+			
+			Fname.sendKeys(firstname);
+			Lname.sendKeys(lastname);
+			email.sendKeys(emailId);
+			
+			
+			
+		}
+		
+		
+	
 	
 	public void clickOnCaptcha() throws InterruptedException {
 		TestBase.getDriver().switchTo().frame(TestBase.getDriver().findElement(By.xpath("//iframe[@title=\"reCAPTCHA\"]")));

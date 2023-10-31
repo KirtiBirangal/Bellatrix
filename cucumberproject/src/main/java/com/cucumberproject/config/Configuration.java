@@ -13,4 +13,6 @@ public class Configuration {
 		return file.getConfiguration("browser_name");
 		
 	}
+	
+	
 }

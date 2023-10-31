@@ -23,6 +23,7 @@ public class BellatrixSteps {
 		contactpage.clickOnContactForm();
 	}
 	
+	
 	@When("User enter a name with numbers in the name field and submit the contact form")
 	public void enterNameWithNumbers() throws InterruptedException {
 		contactpage.FillContactForm();
@@ -72,7 +73,7 @@ public class BellatrixSteps {
 	public void verifySuceesMsgOnSubmittingForm() throws InterruptedException {
 		Thread.sleep(5000);
 		String contactconfirmmsg = keyword.getText("css", "#wpforms-confirmation-3347 > p");
-		Assert.assertFalse(contactconfirmmsg.contains("Thanks for contacting us! We will be in touch with you shortly."),
+		Assert.assertTrue(contactconfirmmsg.contains("Thanks for contacting us! We will be in touch with you shortly."),
 				"Please fill all information correctly");
 
 	}
