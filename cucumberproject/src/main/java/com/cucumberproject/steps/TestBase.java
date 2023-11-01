@@ -2,6 +2,8 @@ package com.cucumberproject.steps;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Date;
 
 import javax.imageio.ImageIO;
@@ -9,6 +11,7 @@ import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.annotations.Optional;
@@ -16,7 +19,7 @@ import org.testng.annotations.Parameters;
 
 
 import com.cucumberproject.config.Configuration;
-
+import com.cucumberproject.exceptions.InvalidBrowserNameError;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -37,33 +40,31 @@ public class TestBase {
 	
 	//@Parameters("browser-name")
 	@Before
-	public void setUp() {
-		config=new Configuration();
-		String browserName=config.getBrowserName();
-		if(browserName==null) {
-			System.out.println("Browser name was not provided, setting up with default browser");
-			browserName="Firefox";
+	public void setUp() throws MalformedURLException {
+
+		config = new Configuration();
+		if (config.getExecutionMode().equalsIgnoreCase("local")) {
+			LOG.info("Executing suite on local");
+			if(config.getBrowserName().equalsIgnoreCase("Chrome")) {
+				driver = new ChromeDriver();
+			}else if(config.getBrowserName().equalsIgnoreCase("Firefox")) {
+				driver = new FirefoxDriver();
+			}else if(config.getBrowserName().equalsIgnoreCase("ie")) {
+				driver = new InternetExplorerDriver();
+			}else {
+				throw new InvalidBrowserNameError(config.getBrowserName());
+			}
+		} else {
+			LOG.info("Executing suite on grid");
+			FirefoxOptions firefoxOptions = new FirefoxOptions();
+			firefoxOptions.setCapability("se:name", "My simple test");
+			firefoxOptions.setCapability("se:sampleMetadata", "Sample metadata value");
+
+			driver = new RemoteWebDriver(new URL("http://192.168.1.39:4444/"), firefoxOptions);
 		}
-		if(browserName.equalsIgnoreCase("Chrome")){
-			driver=new ChromeDriver();
-			
-		}
-		else if(browserName.equalsIgnoreCase("Firefox")){
-			driver=new FirefoxDriver();
-			
-		}
-		else if(browserName.equalsIgnoreCase("InternetExplorer")){
-			driver=new InternetExplorerDriver();
-			
-		}
-		else {
-			System.out.println("Launching default driver");
-			driver=new ChromeDriver();
-		}
-		
 	}
 	
-	@After(order=1)
+	@After
 	public void takeScreenShotOnTestFailure(Scenario scenario) throws IOException {
 		
 		try {
