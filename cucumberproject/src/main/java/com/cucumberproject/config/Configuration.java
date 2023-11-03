@@ -13,6 +13,11 @@ public class Configuration {
 		return file.getConfiguration("browser_name");
 		
 	}
+
+	public String getExecutionMode() {
+		FileUtil file = new FileUtil();
+		return file.getProperty("/src/test/resources/config.properties", "execution_mode");
+	}
 	
 	
 }

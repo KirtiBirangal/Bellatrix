@@ -34,6 +34,10 @@ public class WaitFor {
 	public void withTimeout(Duration ofSeconds) {
 		wait.withTimeout(Duration.ofSeconds(60));
 		
+		
+	}
+	public void elementToBeClickable(WebElement element) {
+		wait.until(ExpectedConditions.elementToBeClickable(element));
 	}
 	
 }
